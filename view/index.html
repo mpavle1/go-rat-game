@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rat Quest!</title>
+  <script type="text/javascript">
+    window.onload = function () {
+      let conn = new WebSocket("ws://" + document.location.host + "/ws");
+
+      conn.onclose = function () {
+        alert("Connection closed");
+      }
+
+      conn.onmessage = function (evt) {
+        console.log({evt});
+      }
+
+      document.addEventListener("keydown", (e) => {
+        console.log({key: e.key})
+        if (['w', 's', 'a', 'd'].includes(e.key)) {
+          conn.send(e.key)
+        }
+      })
+
+    }
+  </script>
+</head>
+
+<body>
+</body>
+
+</html>
