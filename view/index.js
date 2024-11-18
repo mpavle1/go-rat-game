@@ -1,13 +1,22 @@
-let conn = new WebSocket("ws://" + document.location.host + "/ws");
+import { Game } from "./scripts/game.js";
 
-conn.onclose = (evt) => {
-  alert("Connection closed");
-}
+window.addEventListener("load", function () {
+  console.log("Loaded script");
 
-conn.onmessage = (evt) => {
-  console.log({ evt });
-}
+  const game = new Game();
 
-document.addEventListener("keydown", (e) => {
-  conn.send(e.key)
-})
+  let lastTime = 0;
+
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+
+    lastTime = timeStamp;
+    // console.log({ deltaTime });
+    game.render();
+    game.update();
+
+    requestAnimationFrame(animate);
+  }
+
+  animate(0);
+});

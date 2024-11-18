@@ -1,4 +1,4 @@
-module go-mouse-game
+module go-rat-game
 
 go 1.22.5
 

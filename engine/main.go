@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"mime"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -22,6 +23,11 @@ type webSocketHanlder struct {
 type Player struct {
 	x int8
 	y int8
+}
+
+type PlayerUpdate struct {
+	updateType string
+	player     Player
 }
 
 func (p *Player) updatePosition(command string) {
@@ -92,13 +98,14 @@ func (wsh webSocketHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("start responding to client...")
 
-		log.Printf("Old position %d, %d", wsh.player.x, wsh.player.y)
-
 		wsh.player.updatePosition(string(message))
 
 		log.Printf("New position %d, %d", wsh.player.x, wsh.player.y)
 		// err = c.WriteMessage(websocket.TextMessage, []byte(json.NewEncoder(w)))
-		err = c.WriteJSON(wsh.player)
+		err = c.WriteJSON(PlayerUpdate{
+			updateType: "movement",
+			player:     wsh.player,
+		})
 		if err != nil {
 
 			log.Printf("Error %s when sending message to client", err)
@@ -111,18 +118,8 @@ func (wsh webSocketHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	webSocketHanlder := webSocketHanlder{
-		upgrader: websocket.Upgrader{},
-		player: Player{
-			x: 100,
-			y: 100,
-		},
-	}
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../view/index.html")
-	})
-	http.Handle("/ws", webSocketHanlder)
+	mime.AddExtensionType(".js", "application/javascript")
+	http.Handle("/", http.FileServer(http.Dir("../view")))
 	log.Println("Starting server...")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
