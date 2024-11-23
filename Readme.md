@@ -4,10 +4,12 @@ The goal for the game for now will be Plague Inc. type of game. Currently I'm pl
 
 ## Todo's
 
-- [X] Socket connection
-- [] Multiple player connections
-- [] Player data storage
-- [] Basic UI
-- [] Basic controls
-- ...
+### View
 
+- [] Fixed update time
+- [] Player model
+- [] UI
+
+### Engine
+
+- [] Socket connection

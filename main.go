@@ -119,7 +119,7 @@ func (wsh webSocketHanlder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mime.AddExtensionType(".js", "application/javascript")
-	http.Handle("/", http.FileServer(http.Dir("../view")))
+	http.Handle("/", http.FileServer(http.Dir("./view")))
 	log.Println("Starting server...")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }

@@ -12,8 +12,8 @@ window.addEventListener("load", function () {
 
     lastTime = timeStamp;
     // console.log({ deltaTime });
+    game.update(deltaTime);
     game.render();
-    game.update();
 
     requestAnimationFrame(animate);
   }
