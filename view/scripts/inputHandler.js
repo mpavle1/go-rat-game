@@ -42,10 +42,11 @@ export class InputHandler {
   }
 
   #initMouseMove() {
-    window.addEventListener("mousemove", (event) => {
+    document.getElementById("canvas").addEventListener("mousemove", (event) => {
+      const rect = event.target.getBoundingClientRect();
       this.#mousePosition = {
-        x: event.clientX,
-        y: event.clientY,
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
       };
     });
   }

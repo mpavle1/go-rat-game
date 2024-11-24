@@ -1,4 +1,5 @@
 import { Player } from "./player.js";
+import { Screen } from "./screen.js";
 import { calculateAngleBetweenTwoPoints, rotatePoint } from "./utils/math.js";
 
 /**
@@ -12,7 +13,8 @@ export class Projectile {
    * @param {Position} origin
    * @param {Position} direction
    */
-  constructor(player, origin, direction) {
+  constructor(ctx, player, origin, direction) {
+    this._ctx = ctx;
     this.owner = player;
     this.owner = origin;
     this.position = origin;
@@ -49,13 +51,13 @@ export class Projectile {
   }
 
   /**
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {Screen} screen
    */
-  render(ctx) {
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = "black";
-    ctx.fill();
-    ctx.closePath();
+  render(screen) {
+    screen.context.beginPath();
+    screen.context.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2);
+    screen.context.fillStyle = "black";
+    screen.context.fill();
+    screen.context.closePath();
   }
 }

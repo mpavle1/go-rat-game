@@ -1,3 +1,4 @@
+import { World } from "./world.js";
 import { InputHandler } from "./inputHandler.js";
 import { Player } from "./player.js";
 import { Projectile } from "./projectile.js";
@@ -7,6 +8,11 @@ export class Game {
   constructor() {
     /** @type {Screen} */
     this._screen = new Screen("canvas");
+    /** @type {World} */
+    this._world = new World(
+      this._screen.screenDimenstion.width,
+      this._screen.screenDimenstion.height,
+    );
     /** @type {InputHandler} */
     this._inputHandler = new InputHandler();
     /** @type {Projectile[]} */
@@ -16,6 +22,7 @@ export class Game {
       this._screen._ctx,
       this._inputHandler,
       this.projectiles,
+      this._world,
     );
 
     this.timeDiff = 0;
@@ -23,6 +30,7 @@ export class Game {
 
   update() {
     this._player.update();
+    this._screen.setPosition(this._player.position);
 
     this.projectiles.forEach((projectile, index) => {
       projectile.update();
@@ -45,9 +53,8 @@ export class Game {
     this.timeDiff = 0;
     this._screen._ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    this._player.render(this._screen._ctx);
-    this.projectiles.forEach((projectile) =>
-      projectile.render(this._screen._ctx),
-    );
+    this._world.render(this._screen);
+    this._player.render(this._screen);
+    this.projectiles.forEach((projectile) => projectile.render(this._screen));
   }
 }

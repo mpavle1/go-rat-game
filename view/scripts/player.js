@@ -1,6 +1,8 @@
 import { InputHandler } from "./inputHandler.js";
 import { Projectile } from "./projectile.js";
+import { Screen } from "./screen.js";
 import { rotatePoint, calculateAngleBetweenTwoPoints } from "./utils/math.js";
+import { World } from "./world.js";
 
 /**
  * @typedef {Object} Position
@@ -17,27 +19,29 @@ export class Player {
   height = 50;
   width = 35;
   maxHealth = 100;
-  currenHealth = 33;
+  currenHealth = 70;
 
   /**
    * @param {CanvasRenderingContext2D} ctx
    * @param {InputHandler} inputHandler
    * @param {Projectile[]} projectiles
+   * @param {World} world
    */
-  constructor(ctx, inputHandler, projectiles) {
+  constructor(ctx, inputHandler, projectiles, world) {
     this._ctx = ctx;
     this._inputHandler = inputHandler;
     this._projectiles = projectiles;
+    this._world = world;
 
     this.#handleFire();
   }
 
   /**
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {Screen} screen
    */
-  render(ctx) {
-    this.#renderHealthBar(ctx);
-    this.#renderPlayerModel(ctx);
+  render(screen) {
+    this.#renderHealthBar(screen);
+    this.#renderPlayerModel(screen);
   }
 
   update() {
@@ -87,11 +91,12 @@ export class Player {
   }
 
   #handleFire() {
-    window.addEventListener("mousedown", (event) => {
+    this._ctx.canvas.addEventListener("mousedown", (event) => {
       const centerX = this.position.x + this.width / 2;
       const centerY = this.position.y + this.height / 2;
       this._projectiles.push(
         new Projectile(
+          this._ctx,
           this,
           { x: centerX, y: centerY },
           { x: this.viewDirection.x, y: this.viewDirection.y },
@@ -100,17 +105,18 @@ export class Player {
     });
   }
 
-  #renderHealthBar(ctx) {
-    ctx.fillStyle = "red";
-    ctx.fillRect(
+  /** @param {Screen} screen */
+  #renderHealthBar(screen) {
+    screen.context.fillStyle = "red";
+    screen.context.fillRect(
       this.position.x,
       this.position.y - this.height / 2,
       this.width - this.width * (this.currenHealth / this.maxHealth),
       10,
     );
 
-    ctx.fillStyle = "green";
-    ctx.fillRect(
+    screen.context.fillStyle = "green";
+    screen.context.fillRect(
       this.position.x + this.width * (1 - this.currenHealth / this.maxHealth),
       this.position.y - this.height / 2,
       this.width * (this.currenHealth / this.maxHealth),
@@ -118,7 +124,8 @@ export class Player {
     );
   }
 
-  #renderPlayerModel(ctx) {
+  /** @param {Screen} screen */
+  #renderPlayerModel(screen) {
     const centerX = this.position.x + this.width / 2;
     const centerY = this.position.y + this.height / 2;
 
@@ -151,14 +158,14 @@ export class Player {
       this.viewAngle,
     );
 
-    ctx.beginPath();
-    ctx.moveTo(topLeft.x, topLeft.y);
-    ctx.lineTo(topRight.x, topRight.y);
-    ctx.lineTo(bottomRight.x, bottomRight.y);
-    ctx.lineTo(bottomLeft.x, bottomLeft.y);
-    ctx.closePath();
+    screen.context.beginPath();
+    screen.context.moveTo(topLeft.x, topLeft.y);
+    screen.context.lineTo(topRight.x, topRight.y);
+    screen.context.lineTo(bottomRight.x, bottomRight.y);
+    screen.context.lineTo(bottomLeft.x, bottomLeft.y);
+    screen.context.closePath();
 
-    ctx.fillStyle = "blue";
-    ctx.fill();
+    screen.context.fillStyle = "blue";
+    screen.context.fill();
   }
 }
