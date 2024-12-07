@@ -13,8 +13,7 @@ export class Projectile {
    * @param {Position} origin
    * @param {Position} direction
    */
-  constructor(ctx, player, origin, direction) {
-    this._ctx = ctx;
+  constructor(player, origin, direction) {
     this.owner = player;
     this.owner = origin;
     this.position = origin;
@@ -26,14 +25,17 @@ export class Projectile {
       direction.y,
     );
     this.shouldDeleted = false;
-    this.speed = 20;
+    this.speed = 5;
   }
 
   get shouldBeDeleted() {
     return this.shouldDeleted;
   }
 
-  update() {
+  /**
+   * @param {Screen} screen
+   */
+  update(screen) {
     this.position = rotatePoint(
       this.position.x + this.speed,
       this.position.y,
@@ -42,10 +44,10 @@ export class Projectile {
       this.angle,
     );
 
-    if (this.position.x < 0 || this.position.x > this._ctx.canvas.width) {
+    if (this.position.x < 0 || this.position.x > screen.width) {
       this.shouldDeleted = true;
     }
-    if (this.position.y < 0 || this.position.y > this._ctx.canvas.height) {
+    if (this.position.y < 0 || this.position.y > screen.height) {
       this.shouldDeleted = true;
     }
   }
@@ -55,7 +57,16 @@ export class Projectile {
    */
   render(screen) {
     screen.context.beginPath();
-    screen.context.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2);
+    screen.context.ellipse(
+      this.position.x,
+      this.position.y,
+      10,
+      5,
+      this.angle,
+      0,
+      Math.PI * 2,
+    );
+    // screen.context.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2);
     screen.context.fillStyle = "black";
     screen.context.fill();
     screen.context.closePath();

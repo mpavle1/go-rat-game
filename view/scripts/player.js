@@ -14,8 +14,8 @@ export class Player {
   /** @type {Position} */
   position = { x: 0, y: 0 };
   /** @type {Position} */
-  viewDirection = { x: 0, y: 0 };
-  viewAngle = 0;
+  pointerPosition = { x: 0, y: 0 };
+  pointerAngle = 0;
   height = 50;
   width = 35;
   maxHealth = 100;
@@ -44,49 +44,55 @@ export class Player {
     this.#renderPlayerModel(screen);
   }
 
-  update() {
+  /**
+   * @param {Screen} screen
+   */
+  update(screen) {
     this.#handleMovement();
-    this.#handleRotation();
+    this.#handleRotation(screen);
   }
 
   // TODO: Videti kako da izbadcimo ctx iz ove metode
   #handleMovement() {
     const pressedKeys = this._inputHandler.downKeys;
     if (pressedKeys.includes("a")) {
-      this.position.x -= 10;
+      this.position.x -= 5;
 
       if (this.position.x <= 0) {
         this.position.x = 0;
       }
     }
     if (pressedKeys.includes("d")) {
-      this.position.x += 10;
+      this.position.x += 5;
       if (this.position.x >= this._ctx.canvas.width - this.width) {
         this.position.x = this._ctx.canvas.width - this.width;
       }
     }
     if (pressedKeys.includes("w")) {
-      this.position.y -= 10;
+      this.position.y -= 5;
       if (this.position.y <= -this.height / 2) {
         this.position.y = -this.height / 2;
       }
     }
     if (pressedKeys.includes("s")) {
-      this.position.y += 10;
+      this.position.y += 5;
       if (this.position.y >= this._ctx.canvas.height - this.height / 2) {
         this.position.y = this._ctx.canvas.height - this.height / 2;
       }
     }
   }
 
-  #handleRotation() {
-    this.viewDirection = this._inputHandler.mousePosition;
+  /**
+   * @param {Screen} screen
+   */
+  #handleRotation(screen) {
+    this.pointerPosition = this._inputHandler.mousePosition;
 
-    this.viewAngle = calculateAngleBetweenTwoPoints(
-      this.position.x + this.width / 2,
-      this.position.y + this.height / 2,
-      this.viewDirection.x,
-      this.viewDirection.y,
+    this.pointerAngle = calculateAngleBetweenTwoPoints(
+      screen.width / 2 + this.width / 2,
+      screen.height / 2 + this.height / 2,
+      this.pointerPosition.x,
+      this.pointerPosition.y,
     );
   }
 
@@ -96,10 +102,9 @@ export class Player {
       const centerY = this.position.y + this.height / 2;
       this._projectiles.push(
         new Projectile(
-          this._ctx,
           this,
           { x: centerX, y: centerY },
-          { x: this.viewDirection.x, y: this.viewDirection.y },
+          { x: this.pointerPosition.x, y: this.pointerPosition.y },
         ),
       );
     });
@@ -109,16 +114,18 @@ export class Player {
   #renderHealthBar(screen) {
     screen.context.fillStyle = "red";
     screen.context.fillRect(
-      this.position.x,
-      this.position.y - this.height / 2,
+      screen.width / 2 - this.width / 2,
+      screen.height / 2 - this.height,
       this.width - this.width * (this.currenHealth / this.maxHealth),
       10,
     );
 
     screen.context.fillStyle = "green";
     screen.context.fillRect(
-      this.position.x + this.width * (1 - this.currenHealth / this.maxHealth),
-      this.position.y - this.height / 2,
+      screen.width / 2 +
+        this.width / 2 -
+        this.width * (this.currenHealth / this.maxHealth),
+      screen.height / 2 - this.height,
       this.width * (this.currenHealth / this.maxHealth),
       10,
     );
@@ -126,36 +133,36 @@ export class Player {
 
   /** @param {Screen} screen */
   #renderPlayerModel(screen) {
-    const centerX = this.position.x + this.width / 2;
-    const centerY = this.position.y + this.height / 2;
+    const centerX = screen.width / 2;
+    const centerY = screen.height / 2;
 
     const topLeft = rotatePoint(
-      this.position.x,
-      this.position.y,
+      centerX - this.width / 2,
+      centerY - this.height / 2,
       centerX,
       centerY,
-      this.viewAngle,
+      this.pointerAngle,
     );
     const topRight = rotatePoint(
-      this.position.x + this.width,
-      this.position.y,
+      centerX + this.width / 2,
+      centerY - this.height / 2,
       centerX,
       centerY,
-      this.viewAngle,
+      this.pointerAngle,
     );
     const bottomLeft = rotatePoint(
-      this.position.x,
-      this.position.y + this.height,
+      centerX - this.width / 2,
+      centerY + this.height / 2,
       centerX,
       centerY,
-      this.viewAngle,
+      this.pointerAngle,
     );
     const bottomRight = rotatePoint(
-      this.position.x + this.width,
-      this.position.y + this.height,
+      centerX + this.width / 2,
+      centerY + this.height / 2,
       centerX,
       centerY,
-      this.viewAngle,
+      this.pointerAngle,
     );
 
     screen.context.beginPath();

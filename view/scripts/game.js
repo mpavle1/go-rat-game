@@ -8,15 +8,16 @@ export class Game {
   constructor() {
     /** @type {Screen} */
     this._screen = new Screen("canvas");
+
     /** @type {World} */
-    this._world = new World(
-      this._screen.screenDimenstion.width,
-      this._screen.screenDimenstion.height,
-    );
+    this._world = new World();
+
     /** @type {InputHandler} */
     this._inputHandler = new InputHandler();
+
     /** @type {Projectile[]} */
     this.projectiles = [];
+
     /** @type {Player} */
     this._player = new Player(
       this._screen._ctx,
@@ -29,11 +30,11 @@ export class Game {
   }
 
   update() {
-    this._player.update();
+    this._player.update(this._screen);
     this._screen.setPosition(this._player.position);
 
     this.projectiles.forEach((projectile, index) => {
-      projectile.update();
+      projectile.update(this._screen);
       if (projectile.shouldBeDeleted) {
         this.projectiles.splice(index, 1);
       }

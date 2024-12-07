@@ -1,12 +1,9 @@
 import { Screen } from "./screen.js";
 
 export class World {
-  constructor(wEdge, hEdge) {
+  constructor() {
     this.width = 5000;
     this.height = 5000;
-
-    this.wEdge = wEdge;
-    this.hEdge = hEdge;
   }
 
   /**
