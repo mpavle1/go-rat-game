@@ -41,6 +41,10 @@ export class Screen {
   }
 
   // TODO: Srediti da se ovde uzima u obzir i dimenzije elementa
+  /**
+   * @param {Position} position
+   * @returns {boolean}
+   */
   isElementInScreen(position) {
     if (position.x > this.position.x + this.width) {
       return false;

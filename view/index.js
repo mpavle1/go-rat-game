@@ -1,8 +1,6 @@
 import { Game } from "./scripts/game.js";
 
 window.addEventListener("load", function () {
-  console.log("Loaded script");
-
   const game = new Game();
 
   let lastTime = 0;
@@ -11,7 +9,7 @@ window.addEventListener("load", function () {
     const deltaTime = timeStamp - lastTime;
 
     lastTime = timeStamp;
-    // console.log({ deltaTime });
+
     game.update(deltaTime);
     game.render();
 

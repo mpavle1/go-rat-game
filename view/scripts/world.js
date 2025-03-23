@@ -2,32 +2,47 @@ import { Screen } from "./screen.js";
 
 export class World {
   constructor() {
-    this.width = 5000;
-    this.height = 5000;
+    this.width = 500;
+    this.height = 500;
   }
 
   /**
    * @param {Screen} screen
    */
   render(screen) {
-    const screenPositon = screen.screenPosition;
-    const screenDimenstion = screen.screenDimenstion;
+    // const screenPositon = screen.screenPosition;
+    // const screenDimenstion = screen.screenDimenstion;
 
-    screen.context.fillStyle = "#9b7653";
-    screen.context.fillRect(
-      screenPositon.x - screenDimenstion.width / 2,
-      screenPositon.y - screenDimenstion.height / 2,
-      this.width,
-      this.height,
+    // screen.context.fillStyle = "#9b7653";
+    // screen.context.fillRect(
+    //   0,
+    //   0,
+    //   // screenPositon.x - screenDimenstion.width / 2,
+    //   // screenPositon.y - screenDimenstion.height / 2,
+    //   this.width,
+    //   this.height,
+    // );
+    //
+    // screen.context.strokeStyle = "darkred";
+    // // TODO: remove later
+    // screen.context.lineWidth = 100;
+    // screen.context.lineWidth = screenDimenstion.width / 2;
+    const pattern = screen.context.createPattern(
+      document.getElementById("volcano_floor"),
+      "repeat",
     );
+    screen.context.fillStyle = pattern;
+    screen.context.fillRect(0, 0, screen._canvas.width, screen._canvas.height); // Dr
 
-    screen.context.strokeStyle = "darkred";
-    screen.context.lineWidth = screenDimenstion.width / 2;
+    // debug
     screen.context.strokeRect(
-      screenPositon.x - screenDimenstion.width / 2,
-      screenPositon.y - screenDimenstion.height / 2,
+      0,
+      0,
+      // screenPositon.x - screenDimenstion.width / 2,
+      // screenPositon.y - screenDimenstion.height / 2,
       this.width,
       this.height,
     );
+    screen.context.strokeRect(0, 0, this.width, this.height);
   }
 }
