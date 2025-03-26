@@ -1,15 +1,14 @@
-## In Progress Game
+## Todos
 
-The goal for the game for now will be Plague Inc. type of game. Currently I'm planning for the game to be multi player, but that may change in the future. The idea is for one player to be the rat and attempt to infect as many other players as possible with the plague.
+- [] Add multiple canvas elements to represent layers in order to achieve better performance
+- [] Implement UI
+- [] Implement multiple spells
+- [] Implement WS connection
+- [] Implement Menu
+- [] Implement Fortnite style death zone to encourage players to battle more
 
-## Todo's
+## Bugs
 
-### View
-
-- [] Fixed update time
-- [] Player model
-- [] UI
-
-### Engine
-
-- [] Socket connection
+- [] Pointer direction is coordinates on canvas and not in world, and this causes:
+  - [] Player cant rotate 360
+  - [] Projectiles cant be fired in all directions

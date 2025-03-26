@@ -1,48 +1,42 @@
 import { Screen } from "./screen.js";
 
 export class World {
+  image = null;
   constructor() {
-    this.width = 500;
-    this.height = 500;
-  }
+    this.width = 2000;
+    this.height = 2000;
 
-  /**
-   * @param {Screen} screen
-   */
-  render(screen) {
-    // const screenPositon = screen.screenPosition;
-    // const screenDimenstion = screen.screenDimenstion;
+    var ctx = document.createElement("canvas").getContext("2d");
+    ctx.canvas.width = this.width;
+    ctx.canvas.height = this.height;
 
-    // screen.context.fillStyle = "#9b7653";
-    // screen.context.fillRect(
-    //   0,
-    //   0,
-    //   // screenPositon.x - screenDimenstion.width / 2,
-    //   // screenPositon.y - screenDimenstion.height / 2,
-    //   this.width,
-    //   this.height,
-    // );
-    //
-    // screen.context.strokeStyle = "darkred";
-    // // TODO: remove later
-    // screen.context.lineWidth = 100;
-    // screen.context.lineWidth = screenDimenstion.width / 2;
-    const pattern = screen.context.createPattern(
+    const pattern = ctx.createPattern(
       document.getElementById("volcano_floor"),
       "repeat",
     );
-    screen.context.fillStyle = pattern;
-    screen.context.fillRect(0, 0, screen._canvas.width, screen._canvas.height); // Dr
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    // debug
-    screen.context.strokeRect(
+    // store the generate map as this image texture
+    this.image = new Image();
+    this.image.src = ctx.canvas.toDataURL("image/png");
+
+    // clear context
+    ctx = null;
+  }
+
+  /** @param {Screen} screen */
+  render(screen) {
+    screen.context.drawImage(
+      this.image,
+      screen.position.x - screen.width / 2,
+      screen.position.y - screen.height / 2,
+      screen.width,
+      screen.height,
       0,
       0,
-      // screenPositon.x - screenDimenstion.width / 2,
-      // screenPositon.y - screenDimenstion.height / 2,
-      this.width,
-      this.height,
+      screen.width,
+      screen.height,
     );
-    screen.context.strokeRect(0, 0, this.width, this.height);
   }
 }

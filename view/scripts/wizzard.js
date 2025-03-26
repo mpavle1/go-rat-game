@@ -1,16 +1,14 @@
-import { Projectile } from "./projectile.js";
 import { Screen } from "./screen.js";
 import { rotatePoint } from "./utils/math.js";
-import { World } from "./world.js";
 
 /**
- * @typedef {Object} Position
+ * @typedef {Object} Vector2d
  * @property {number} x
  * @property {number} y
  */
 
 export class Wizzard {
-  /** @type {Position} */
+  /** @type {Vector2d} */
   position = { x: 0, y: 0 };
   pointerAngle = 0;
   height = 40;
@@ -20,16 +18,10 @@ export class Wizzard {
   speed = 2.2;
 
   /**
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {Projectile[]} projectiles
-   * @param {World} world
    * @param {HTMLImageElement} image
-   * @param {Position} startingPosition
+   * @param {Vector2d} startingPosition
    */
-  constructor(ctx, projectiles, world, image, startingPosition) {
-    this._ctx = ctx;
-    this._projectiles = projectiles;
-    this._world = world;
+  constructor(image, startingPosition) {
     this.image = image;
 
     this.position = startingPosition;
@@ -37,12 +29,10 @@ export class Wizzard {
     this.currenHealth = this.maxHealth;
   }
 
-  /**
-   * @param {Screen} screen
-   */
+  /** @param {Screen} screen */
   render(screen) {
-    this.#renderHealthBar(screen);
-    this.#renderPlayerModel(screen);
+    this.renderHealthBar(screen, this.position);
+    this.renderPlayerModel(screen, this.position);
   }
 
   update() {}
@@ -55,30 +45,39 @@ export class Wizzard {
     return this.currenHealth <= 0;
   }
 
-  /** @param {Screen} screen */
-  #renderHealthBar(screen) {
+  /**
+   * @param {Screen} screen
+   * @param {Vector2d} position
+   */
+  renderHealthBar(screen, position) {
+    if (this.isDead()) {
+      return;
+    }
     const yOffset = this.height / 2;
     const currentHealthPercent = this.currenHealth / this.maxHealth;
 
     screen.context.fillStyle = "red";
     screen.context.fillRect(
-      this.position.x,
-      this.position.y - yOffset,
+      position.x,
+      position.y - yOffset,
       this.width * (1 - currentHealthPercent),
       10,
     );
 
     screen.context.fillStyle = "green";
     screen.context.fillRect(
-      this.position.x + this.width * (1 - currentHealthPercent),
-      this.position.y - yOffset,
+      position.x + this.width * (1 - currentHealthPercent),
+      position.y - yOffset,
       this.width * currentHealthPercent,
       10,
     );
   }
 
-  /** @param {Screen} screen */
-  #renderDead(screen) {
+  /**
+   * @param {Screen} screen
+   * @param {Vector2d} position
+   */
+  renderDead(screen, position) {
     screen.context.save();
     screen.context.drawImage(
       document.getElementById("dead_player_blood_splat"),
@@ -86,8 +85,8 @@ export class Wizzard {
       0,
       440,
       550,
-      this.position.x,
-      this.position.y,
+      position.x,
+      position.y,
       this.width,
       this.height,
     );
@@ -95,7 +94,7 @@ export class Wizzard {
   }
 
   /** @param {Screen} screen */
-  #renderDebug(screen) {
+  renderDebug(screen) {
     const centerX = this.position.x + this.width / 2;
     const centerY = this.position.y + this.height / 2;
 
@@ -141,20 +140,22 @@ export class Wizzard {
     screen.context.restore();
   }
 
-  /** @param {Screen} screen */
-  #renderPlayerModel(screen) {
+  /** @param {Screen} screen
+   *@param {Vector2d} position
+   * */
+  renderPlayerModel(screen, position) {
     if (this.isDead()) {
-      this.#renderDead(screen);
+      this.renderDead(screen, position);
       return;
     }
 
     screen.context.save();
     screen.context.translate(
-      this.position.x + this.width / 2,
-      this.position.y + this.height / 2,
+      position.x + this.width / 2,
+      position.y + this.height / 2,
     );
-    // TODO: imamo ovaj + (90%) jer je slika lose rotirana
-    screen.context.rotate(this.pointerAngle + 1.570796);
+    // TODO: ovo ne radi bas najbolje za Hero
+    screen.context.rotate(this.pointerAngle);
     screen.context.drawImage(
       this.image,
       0,
